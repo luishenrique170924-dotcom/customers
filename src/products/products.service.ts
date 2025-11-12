@@ -1,40 +1,37 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpsertProductDTO } from './dto/upsert-product.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Product } from './products.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
     private products: Array<any>;
     
-    constructor() {
-        this.products = [
-        {
-            "id": 1,
-            "name": "Biscoito"
-        },
-        {
-            "id": 2,
-            "name": "Morango"
-        }
-        ]
-
+    constructor(
+        @InjectRepository(Product) 
+        private productsRepository: Repository<Product>,
+    ) {
+        this.products =  [
+            {
+                "id": 1,
+                "name": "Biscoito"
+            },
+            {
+                "id": 2,
+                "name": "Morango"
+            }
+        ];
     }
 
     findAll() {
-        return this.products;
+        return this.productsRepository.find();
     }
 
-    create(product: UpsertProductDTO) {
-        // last id porque eu quero controlar o próximo id
-        let last_id = 0;
-        if (this.products.length != 0) {
-            last_id = this.products[this.products.length - 1].id;
-        }
-        const newProduct = {
-            "id": last_id + 1,
-            ...product
-        };
-        this.products.push(newProduct);
-       
+    async create(product: UpsertProductDTO) {
+        const newproduct = this.productsRepository.create(product);
+        await this.productsRepository.save(newproduct);   
+
         return {
             "message": "Produto Criado!"
         };

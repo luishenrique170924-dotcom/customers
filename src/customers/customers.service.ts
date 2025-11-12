@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { UpsertDTO } from "./dto/upsert.dto";
 
 @Injectable()
@@ -12,13 +12,6 @@ export class CustomersService {
             "nome": "Félix",
             "email": "felix@gmail.com",
             "idade": 18
-        },
-        {
-            "id": 2,
-            "nome": "Maria",
-            "email": "maria@gmail.com",
-            "idade": 22
-            
         }
      ]
    }
@@ -41,37 +34,4 @@ export class CustomersService {
         "message": "Salvo com sucesso"
      };
    }
-
-   delete(id: number) {
-      const position = this.customers.findIndex((customer) => customer.id == id);
-      if (position == -1) {
-          throw new NotFoundException('Cliente não encontrado');
-
-      }
-      this.customers.splice(position, 1);
-
-      return {
-         "message": "Removido com sucesso"
-      };
-   }
-
-   update(id: number , customer: UpsertDTO) {
-      const position = this.customers.findIndex((c) => c.id == id);
-      if (position == -1) {
-         throw new NotFoundException('Cliente não encontrado');
-      }
-      this.customers[position] = {
-         'id': this.customers[position].id,
-         ...customer
-      };
-
-      return {
-         "message": "Atualizado com sucesso"
-      };
-
-
-
-   }
-
-
 }
